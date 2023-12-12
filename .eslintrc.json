@@ -1,3 +1,12 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": ["airbnb", "next", "next/core-web-vitals"],
+  "rules": {
+    "linebreak-style": 0,
+    "import/no-extraneous-dependencies": 0,
+    "import/prefer-default-export": 0,
+    "import/extensions": 0,
+    "import/no-unresolved": 0,
+    "no-console": 0,
+    "no-underscore-dangle": 0
+  }
 }
