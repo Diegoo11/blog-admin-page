@@ -11,7 +11,7 @@ const getData = async () => {
 
   let data;
   try {
-    data = await Article.find({});
+    data = await Article.find({}).sort({ date: -1 });
   } catch (error) {
     console.log(error);
     return [];

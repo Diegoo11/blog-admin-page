@@ -59,7 +59,7 @@ export default function EditForm({
         body: formToImage,
       }).then((res) => res.json());
 
-      formsToPdf = pdf.length && formsToPdf.map((form) => fetch('https://api.cloudinary.com/v1_1/dux0sb99g/upload', {
+      formsToPdf = pdf.length === 0 ? [] : formsToPdf.map((form) => fetch('https://api.cloudinary.com/v1_1/dux0sb99g/upload', {
         method: 'POST',
         body: form,
       }).then((res) => res.json()));
@@ -75,7 +75,7 @@ export default function EditForm({
           content,
           type,
           image: image && resImage.secure_url,
-          pdf: pdf.length && resPdf.map((p) => p.secure_url),
+          pdf: pdf.length === 0 ? [] : resPdf.map((p) => p.secure_url),
           id,
         }),
       });
@@ -97,6 +97,7 @@ export default function EditForm({
         label="Titulo"
         labelPlacement="outside"
         placeholder="Agrega tu titulo"
+        isRequired
       />
       <Input
         size="lg"
@@ -106,6 +107,7 @@ export default function EditForm({
         onValueChange={setAuthor}
         labelPlacement="outside"
         placeholder="Agrega al autor"
+        isRequired
       />
       <ImageInput setImage={setImage} initImage={imageUrlProps} />
       <PdfInput setPdf={setPdf} pdf={pdf} />
@@ -128,6 +130,7 @@ export default function EditForm({
         label="Descripcion, preview o resumen"
         labelPlacement="outside"
         placeholder="Agrega un resumen"
+        isRequired
       />
       <div className="flex flex-col gap-2">
         <span>

@@ -13,12 +13,13 @@ export async function POST(req) {
     title,
     content,
     author,
-    image,
+    image: image || 'https://cdn.discordapp.com/attachments/772232222220615710/1184679286871949382/Untitled-2023-07-21-2004_6.png?ex=658cd990&is=657a6490&hm=1f93a7838766fad1a07914c969299ce21eaa7f97bf5955a0e08d465ea38a7d12&',
     type,
     description,
-    pdf,
     path: format(title),
   });
+
+  if (pdf) article.pdf = pdf;
 
   try {
     await article.save();

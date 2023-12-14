@@ -4,7 +4,7 @@ import Divider from '../utils/Divider';
 import DeleteButton from './DeleteButton';
 import formatDate from '@/utils/formatDate';
 
-const URL = 'http://localhost:3000';
+const URL = process.env.PRODUCTION_URL;
 
 export default function Card({
   title, author, description, type, image, pdf, path, content, date, id,

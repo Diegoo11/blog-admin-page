@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable react/jsx-no-comment-textnodes */
 
@@ -24,6 +25,7 @@ export default function ImageInput({ setImage, initImage }) {
           accept="image/*"
           onChange={(e) => {
             const file = e.target.files[e.target.files.length - 1];
+            if (!file) return setImage(null);
             setImage(file);
             const reader = new FileReader();
             reader.readAsDataURL(file);

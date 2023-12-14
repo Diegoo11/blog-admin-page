@@ -27,7 +27,7 @@ export async function POST(req) {
   article.type = type;
   article.description = description;
   article.path = format(title);
-  if (pdf) article.pdf = pdf;
+  if (pdf.length !== 0) article.pdf = pdf;
   if (image) article.image = image;
 
   try {

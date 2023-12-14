@@ -58,7 +58,7 @@ export default function Crear() {
         body: formToImage,
       }).then((res) => res.json());
 
-      formsToPdf = pdf.length && formsToPdf.map((form) => fetch('https://api.cloudinary.com/v1_1/dux0sb99g/upload', {
+      formsToPdf = pdf.length === 0 ? [] : formsToPdf.map((form) => fetch('https://api.cloudinary.com/v1_1/dux0sb99g/upload', {
         method: 'POST',
         body: form,
       }).then((res) => res.json()));
@@ -74,7 +74,7 @@ export default function Crear() {
           content,
           type,
           image: resImage.secure_url,
-          pdf: pdf.length && resPdf.map((p) => p.secure_url),
+          pdf: pdf.length === 0 ? [] : resPdf.map((p) => p.secure_url),
         }),
       });
       toast.success('Articulo creado con exito');
@@ -82,6 +82,7 @@ export default function Crear() {
 
       setLoading(false);
     } catch (error) {
+      console.log(error);
       toast.error('Error del servidor al crear el articulo');
       setLoading(false);
     }
@@ -99,6 +100,7 @@ export default function Crear() {
           label="Titulo"
           labelPlacement="outside"
           placeholder="Agrega tu titulo"
+          isRequired
         />
         <Input
           size="lg"
@@ -108,6 +110,7 @@ export default function Crear() {
           onValueChange={setAuthor}
           labelPlacement="outside"
           placeholder="Agrega al autor"
+          isRequired
         />
         <ImageInput setImage={setImage} />
         <PdfInput setPdf={setPdf} pdf={pdf} />
@@ -115,6 +118,7 @@ export default function Crear() {
           label="Selecciona el tipo de articulo"
           onValueChange={setType}
           value={type}
+          isRequired
         >
           <Radio value="Front End">Front End</Radio>
           <Radio value="Back End">Back End</Radio>
@@ -130,6 +134,7 @@ export default function Crear() {
           label="Descripcion, preview o resumen"
           labelPlacement="outside"
           placeholder="Agrega un resumen"
+          isRequired
         />
         <div className="flex flex-col gap-2">
           <span>

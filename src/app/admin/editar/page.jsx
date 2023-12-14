@@ -25,6 +25,7 @@ export default async function Page({ searchParams }) {
         descriptionProp={data.description}
         contentProp={data.content}
         typeProp={data.type}
+        imageUrlProps={data.image}
         id={data.id}
       />
     </div>
