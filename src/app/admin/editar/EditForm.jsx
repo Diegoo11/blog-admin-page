@@ -116,11 +116,11 @@ export default function EditForm({
         onValueChange={setType}
         value={type}
       >
-        <Radio value="Front-End">Front End</Radio>
-        <Radio value="Back-End">Back End</Radio>
+        <Radio value="Front End">Front End</Radio>
+        <Radio value="Back End">Back End</Radio>
         <Radio value="JavaScript">JavaScript</Radio>
         <Radio value="Python">Python</Radio>
-        <Radio value="Full-Stack">Full Stack</Radio>
+        <Radio value="Full Stack">Full Stack</Radio>
       </RadioGroup>
       <Textarea
         size="lg"
