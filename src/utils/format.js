@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 export default function format(s) {
   s = s.replace('?', '');
   s = s.replace('/', '');
