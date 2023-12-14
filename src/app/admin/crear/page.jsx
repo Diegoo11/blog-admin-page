@@ -8,11 +8,13 @@ import 'quill/dist/quill.snow.css';
 import {
   Input, Button, Textarea, RadioGroup, Radio,
 } from '@nextui-org/react';
-import { useRouter } from 'next/navigation';
 import Title from '../../components/Home/Title';
+import { useUtils } from '../../providers/UtilContext';
+import ImageInput from '../ImageInput';
+import PdfInput from '../PdfInput';
 
 export default function Crear() {
-  const router = useRouter();
+  const { toast } = useUtils();
 
   const { quill, quillRef } = useQuill();
   const [title, setTitle] = useState('');
@@ -20,6 +22,9 @@ export default function Crear() {
   const [description, setDescription] = useState('');
   const [content, setContent] = useState('');
   const [type, setType] = useState('');
+
+  const [image, setImage] = useState(null);
+  const [pdf, setPdf] = useState([]);
 
   const [loading, setLoading] = useState(false);
 
@@ -31,11 +36,36 @@ export default function Crear() {
     }
   }, [quill]);
 
-  const handdleSubmit = (e) => {
+  const handdleSubmit = async (e) => {
     e.preventDefault();
+
+    const formToImage = new FormData();
+    formToImage.append('file', image);
+    formToImage.append('upload_preset', 'blog-project');
+
+    let formsToPdf = [];
+    pdf.forEach((p) => {
+      const formToPdf = new FormData();
+      formToPdf.append('upload_preset', 'blog-project');
+      formToPdf.append('file', p);
+      formsToPdf.push(formToPdf);
+    });
+
     setLoading(true);
     try {
-      fetch('/api/article/add', {
+      const resToImage = fetch('https://api.cloudinary.com/v1_1/dux0sb99g/upload', {
+        method: 'POST',
+        body: formToImage,
+      }).then((res) => res.json());
+
+      formsToPdf = pdf.length && formsToPdf.map((form) => fetch('https://api.cloudinary.com/v1_1/dux0sb99g/upload', {
+        method: 'POST',
+        body: form,
+      }).then((res) => res.json()));
+
+      const [resImage, resPdf] = await Promise.all([resToImage, Promise.all(formsToPdf)]);
+
+      await fetch('/api/article/add', {
         method: 'POST',
         body: JSON.stringify({
           title,
@@ -43,10 +73,16 @@ export default function Crear() {
           description,
           content,
           type,
+          image: resImage.secure_url,
+          pdf: pdf.length && resPdf.map((p) => p.secure_url),
         }),
       });
-      router.push('/admin');
+      toast.success('Articulo creado con exito');
+      location.replace('/admin');
+
+      setLoading(false);
     } catch (error) {
+      toast.error('Error del servidor al crear el articulo');
       setLoading(false);
     }
   };
@@ -73,6 +109,8 @@ export default function Crear() {
           labelPlacement="outside"
           placeholder="Agrega al autor"
         />
+        <ImageInput setImage={setImage} />
+        <PdfInput setPdf={setPdf} pdf={pdf} />
         <RadioGroup
           label="Selecciona el tipo de articulo"
           onValueChange={setType}

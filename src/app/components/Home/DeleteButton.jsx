@@ -5,12 +5,16 @@ import { useState } from 'react';
 import {
   Modal, Button, ModalHeader, ModalBody, ModalFooter, ModalContent, useDisclosure,
 } from '@nextui-org/react';
+import { useRouter } from 'next/navigation';
 import formatDate from '@/utils/formatDate';
+import { useUtils } from '@/app/providers/UtilContext';
 
 export default function DeleteButton({
   title, description, image, author, date, id,
 }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { toast } = useUtils();
+  const router = useRouter();
 
   const [loading, setLoading] = useState(false);
 
@@ -23,10 +27,12 @@ export default function DeleteButton({
           id,
         }),
       });
+      toast.success('Articulo editado con exito');
       setLoading(false);
       onClose();
+      router.refresh({ revalidate: 0 });
     } catch (error) {
-      console.error(error);
+      toast.error('Error del servidor al eliminar el articulo');
     }
   };
   return (

@@ -4,7 +4,7 @@ import Divider from '../utils/Divider';
 import DeleteButton from './DeleteButton';
 import formatDate from '@/utils/formatDate';
 
-const URL = 'https://localhost:3000';
+const URL = 'http://localhost:3000';
 
 export default function Card({
   title, author, description, type, image, pdf, path, content, date, id,

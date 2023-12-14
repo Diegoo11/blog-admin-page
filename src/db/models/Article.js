@@ -33,10 +33,10 @@ const Schema = new mongoose.Schema({
     type: String,
     require: true,
   },
-  pdf: {
+  pdf: [{
     type: String,
     require: true,
-  },
+  }],
 });
 
 export default mongoose.models.Article || mongoose.model('Article', Schema);

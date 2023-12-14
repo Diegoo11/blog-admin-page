@@ -6,7 +6,7 @@ import format from '@/utils/format';
 export async function POST(req) {
   await dbConnect();
   const {
-    title, content, author, type, description, id,
+    title, content, author, type, description, image, pdf, id,
   } = await req.json();
 
   let article;
@@ -27,8 +27,8 @@ export async function POST(req) {
   article.type = type;
   article.description = description;
   article.path = format(title);
-  // article.pdf = pdf;
-  // article.image = image;
+  if (pdf) article.pdf = pdf;
+  if (image) article.image = image;
 
   try {
     await article.save();

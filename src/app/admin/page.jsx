@@ -4,6 +4,8 @@ import Options from '../components/Home/Options';
 import dbConnect from '@/db/dbConnect';
 import Article from '@/db/models/Article';
 
+export const revalidate = 0;
+
 const getData = async () => {
   await dbConnect();
 

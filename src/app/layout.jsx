@@ -1,6 +1,7 @@
 import { Inter } from 'next/font/google';
 import './globals.css';
 import NextAuth from './providers/NextAuth';
+import { UtilsProvider } from '@/app/providers/UtilContext';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -14,9 +15,11 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
         <NextAuth>
-          <div className="w-full flex flex-col items-center justify-start relative">
-            {children}
-          </div>
+          <UtilsProvider>
+            <div className="w-full flex flex-col items-center justify-start relative">
+              {children}
+            </div>
+          </UtilsProvider>
         </NextAuth>
       </body>
     </html>

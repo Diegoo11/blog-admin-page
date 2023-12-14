@@ -6,12 +6,14 @@ import 'quill/dist/quill.snow.css';
 import {
   Input, Button, Textarea, RadioGroup, Radio,
 } from '@nextui-org/react';
-import { useRouter } from 'next/navigation';
+import { useUtils } from '@/app/providers/UtilContext';
+import ImageInput from '../ImageInput';
+import PdfInput from '../PdfInput';
 
 export default function EditForm({
-  titleProp, authorProp, descriptionProp, contentProp, typeProp, id,
+  titleProp, authorProp, descriptionProp, contentProp, typeProp, id, imageUrlProps,
 }) {
-  const router = useRouter();
+  const { toast } = useUtils();
 
   const { quill, quillRef } = useQuill();
   const [title, setTitle] = useState(titleProp);
@@ -19,6 +21,9 @@ export default function EditForm({
   const [description, setDescription] = useState(descriptionProp);
   const [content, setContent] = useState(contentProp);
   const [type, setType] = useState(typeProp);
+
+  const [image, setImage] = useState(null);
+  const [pdf, setPdf] = useState([]);
 
   const [loading, setLoading] = useState(false);
 
@@ -31,11 +36,37 @@ export default function EditForm({
     }
   }, [quill, contentProp]);
 
-  const handdleSubmit = (e) => {
+  const handdleSubmit = async (e) => {
     e.preventDefault();
+
+    const formToImage = new FormData();
+    formToImage.append('file', image);
+    formToImage.append('upload_preset', 'blog-project');
+
+    let formsToPdf = [];
+    pdf.forEach((p) => {
+      const formToPdf = new FormData();
+      formToPdf.append('upload_preset', 'blog-project');
+      formToPdf.append('file', p);
+      formsToPdf.push(formToPdf);
+    });
+
     setLoading(true);
+
     try {
-      fetch('/api/article/edit', {
+      const resToImage = image && fetch('https://api.cloudinary.com/v1_1/dux0sb99g/upload', {
+        method: 'POST',
+        body: formToImage,
+      }).then((res) => res.json());
+
+      formsToPdf = pdf.length && formsToPdf.map((form) => fetch('https://api.cloudinary.com/v1_1/dux0sb99g/upload', {
+        method: 'POST',
+        body: form,
+      }).then((res) => res.json()));
+
+      const [resImage, resPdf] = await Promise.all([resToImage, Promise.all(formsToPdf)]);
+
+      await fetch('/api/article/edit', {
         method: 'POST',
         body: JSON.stringify({
           title,
@@ -43,11 +74,15 @@ export default function EditForm({
           description,
           content,
           type,
+          image: image && resImage.secure_url,
+          pdf: pdf.length && resPdf.map((p) => p.secure_url),
           id,
         }),
       });
-      router.push('/admin');
+      toast.success('Articulo editado con exito');
+      location.replace('/admin');
     } catch (error) {
+      toast.error('Error del servidor al editar el articulo');
       setLoading(false);
     }
   };
@@ -72,16 +107,18 @@ export default function EditForm({
         labelPlacement="outside"
         placeholder="Agrega al autor"
       />
+      <ImageInput setImage={setImage} initImage={imageUrlProps} />
+      <PdfInput setPdf={setPdf} pdf={pdf} />
       <RadioGroup
         label="Selecciona el tipo de articulo"
         onValueChange={setType}
         value={type}
       >
-        <Radio value="Front End">Front End</Radio>
-        <Radio value="Back End">Back End</Radio>
+        <Radio value="Front-End">Front End</Radio>
+        <Radio value="Back-End">Back End</Radio>
         <Radio value="JavaScript">JavaScript</Radio>
         <Radio value="Python">Python</Radio>
-        <Radio value="Full Stack">Full Stack</Radio>
+        <Radio value="Full-Stack">Full Stack</Radio>
       </RadioGroup>
       <Textarea
         size="lg"
@@ -102,7 +139,7 @@ export default function EditForm({
       </div>
       <div className="w-full p-10 flex justify-end items-center ">
         <Button type="submit" isLoading={loading}>
-          Crear
+          Editar
         </Button>
       </div>
     </form>
